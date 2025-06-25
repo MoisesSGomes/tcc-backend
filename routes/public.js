@@ -150,15 +150,13 @@ router.get('/eventos-slider', async (req, res) => {
             },
             orderBy: { date: 'asc' }, 
             take: 5 
-        });
-
-        const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+        });       
 
         const eventosFormatados = eventos.map((evento) => ({
             id: evento.id,
             titleEvent: evento.title,
             descriptionEvent: evento.description,
-            image: `${baseUrl}${evento.image.path}`,
+            image: `${'https://letsgoparty-api.onrender.com'}${evento.image.path}`,
             date: evento.date 
         }));
 
