@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email                     String   @unique
+  name                      String
+  lastName                  String?
+  password                  String?
+  resetPasswordToken        String?
+  resetPasswordExpires      DateTime?
+  verificationToken         String?
+  verificationTokenExpires  DateTime?      
+  verified                  Boolean   @default(false) 
+  events                    Event[]
+  image                     Image?
+  googleId                  String?   @unique
+  likes    Like[]
+}
+
+model Event {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  date        DateTime
+  hour        String
+  address     String
+  number      String
+  district    String
+  city        String
+  state       String
+  local       String
+  image       Image
+  category    String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id])
+  dateEvent   DateTime @default(now())
+  likes    Like[]
+}
+
+type Image {
+  path     String
+  filename String
+}
+
+model Like {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId]) // impede curtida duplicada
+}
